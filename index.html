@@ -125,11 +125,11 @@
         .square.legal-capture::before { position: absolute; z-index: 2; inset: 12%; border: 2px solid rgba(205, 157, 83, .78); border-radius: 50%; box-shadow: 0 0 0 1px rgba(23, 28, 25, .24), 0 0 5px rgba(220, 178, 103, .24); content: ""; animation: legal-capture-pulse 1.9s ease-in-out infinite; }
         .square-label { position: absolute; z-index: 3; left: 3px; bottom: 1px; color: rgba(32, 38, 34, .68); font: 600 9px "Segoe UI", Arial, sans-serif; pointer-events: none; }
         .square.dark .square-label { color: rgba(231, 228, 220, .66); }
-        .piece { position: relative; z-index: 2; display: grid; width: 90%; height: 90%; place-items: center; font-family: "DejaVu Sans", "Segoe UI Symbol", serif; font-size: clamp(29px, 6.4vw, 55px); line-height: 1; transform: translateY(-2px); transition: transform .18s, filter .18s; user-select: none; pointer-events: none; }
-        .piece::before { position: absolute; z-index: -1; right: 15%; bottom: 8%; left: 15%; height: 12%; border: 1px solid rgba(102, 79, 43, .72); border-radius: 3px 3px 6px 6px; background: linear-gradient(180deg, #d0bd91, #78684a 43%, #423a2b); box-shadow: 0 3px 3px rgba(0,0,0,.48), inset 0 1px rgba(255,245,213,.38); content: ""; }
-        .piece::after { position: absolute; z-index: -1; right: 26%; bottom: 5%; left: 26%; height: 3px; border-radius: 50%; background: rgba(15, 16, 14, .58); content: ""; }
-        .piece.white { color: #f0e5c9; text-shadow: 0 1px 0 #a39067, 0 3px 1px #64563d, 0 6px 5px rgba(27, 24, 18, .78); -webkit-text-stroke: .45px #746345; }
-        .piece.black { color: #5b625c; text-shadow: 0 1px 0 #d8ccb2, 0 3px 1px #2f332e, 0 6px 5px rgba(27, 24, 18, .65); -webkit-text-stroke: .45px #8e7d5c; }
+        .piece { position: relative; z-index: 2; display: grid; width: 88%; height: 88%; place-items: center; font-family: "DejaVu Sans", "Segoe UI Symbol", serif; font-size: clamp(28px, 6.2vw, 52px); line-height: 1; transform: translateY(-2px); transition: transform .18s, filter .18s; user-select: none; pointer-events: none; }
+        .piece::before { position: absolute; z-index: -1; right: 16%; bottom: 8%; left: 16%; height: 11%; border: 1px solid rgba(110, 88, 48, .75); border-radius: 3px 3px 6px 6px; background: linear-gradient(180deg, #d8c7a0, #7a6b4d 45%, #3c3528); box-shadow: 0 3px 3px rgba(0,0,0,.48), inset 0 1px rgba(255,245,213,.35); content: ""; }
+        .piece::after { position: absolute; z-index: -1; right: 26%; bottom: 5%; left: 26%; height: 3px; border-radius: 50%; background: rgba(15, 16, 14, .6); content: ""; }
+        .piece.white { color: #fff7e2; text-shadow: 0 1px 0 #8f7b52, 0 3px 2px rgba(20, 18, 13, .85), 0 6px 6px rgba(0, 0, 0, .75); -webkit-text-stroke: .75px #3c3323; }
+        .piece.black { color: #262b2e; text-shadow: 0 1px 0 rgba(235, 215, 168, .72), 0 3px 2px rgba(0, 0, 0, .72), 0 6px 6px rgba(0, 0, 0, .65); -webkit-text-stroke: .75px #d9c28e; }
         .piece[data-piece="k"] { filter: drop-shadow(0 0 3px rgba(218, 179, 99, .35)); }
         .piece.white[data-piece="r"] { color: #c2ad7d; }
         .square:active .piece { transform: translateY(-5px) scale(1.05); }
@@ -3791,7 +3791,7 @@ body[data-palette="light"] .skip-button {
                     moveHint.textContent = `Rakip hamlesi: ${pName} (${squareName(mv.fromRow, mv.fromCol)} → ${squareName(mv.toRow, mv.toCol)})`;
                 }
                 else render();
-            }, 250);
+            }, 680);
         }
 
         function getPositionHash() {
