@@ -4215,7 +4215,10 @@ body[data-palette="light"] .skip-button {
         }
 
         function showMenuScreen(screenId) {
-            
+            if (Date.now() < lockMenuUntil) return;
+            menuOverlay.style.pointerEvents = '';
+            menuOverlay.style.visibility = '';
+            menuOverlay.style.opacity = '';
             ['menu-home', 'play-options', 'settings-options', 'achievement-options', 'rank-event-options', 'tutorial-options', 'shop-options', 'puzzle-options', 'stats-options', 'special-rules-options'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.hidden = id !== screenId;
@@ -4229,6 +4232,7 @@ body[data-palette="light"] .skip-button {
         }
 
         function showModeMenu() {
+            userStartedGame = false;
             if (isStartingGame || (Date.now() - lastModeStartAt < 650)) return;
             clearTimeout(aiTimer); aiTimer = null; aiThinking = false; showMenuScreen('menu-home');
         }
@@ -4498,11 +4502,15 @@ body[data-palette="light"] .skip-button {
         let lastModeStartAt = 0;
         let isStartingGame = false;
 
+        let userStartedGame = false;
+        let lockMenuUntil = 0;
         function startSelectedGame(mode, difficulty = aiDifficulty, isEventMatch = false) {
+            userStartedGame = true;
             const now = Date.now();
             if (isStartingGame || (now - lastModeStartAt < 650)) return;
             isStartingGame = true;
             lastModeStartAt = now;
+            lockMenuUntil = now + 1500;
             window.setTimeout(() => { isStartingGame = false; }, 450);
             if (document.activeElement && typeof document.activeElement.blur === 'function') {
                 document.activeElement.blur();
@@ -4519,6 +4527,9 @@ body[data-palette="light"] .skip-button {
             void startConfiguredMusic();
             menuOverlay.classList.remove('visible');
             menuOverlay.setAttribute('aria-hidden', 'true');
+            menuOverlay.style.pointerEvents = 'none';
+            menuOverlay.style.visibility = 'hidden';
+            menuOverlay.style.opacity = '0';
             const shell = document.querySelector('.game-shell');
             if (shell) shell.removeAttribute('aria-hidden');
             resetGame();
@@ -4633,7 +4644,10 @@ body[data-palette="light"] .skip-button {
                 if (progressFill) progressFill.style.width = `${v}%`;
             }
 
+            let introFinished = false;
             function finishIntro() {
+                if (introFinished) return;
+                introFinished = true;
                 setProg(100);
                 document.body.classList.remove('intro-active');
                 if (gameShell) gameShell.removeAttribute('aria-hidden');
@@ -4642,8 +4656,10 @@ body[data-palette="light"] .skip-button {
                     intro.setAttribute('aria-hidden', 'true');
                     if (intro.parentNode) intro.parentNode.removeChild(intro);
                 }
-                showModeMenu();
-                openWelcomeDailyModalIfAvailable();
+                if (!userStartedGame) {
+                    showModeMenu();
+                    openWelcomeDailyModalIfAvailable();
+                }
             }
 
             const startedAt = performance.now();
