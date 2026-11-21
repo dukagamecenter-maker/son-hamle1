@@ -1105,7 +1105,25 @@ body[data-palette="light"] .skip-button {
             .panel-note { grid-column: 1 / -1; font-size: 8px; }
             .footer-note { margin-top: 8px; }
             .duel-card { padding: 13px; }
-            .duel-arena { height: 220px; }
+            .duel-arena { height: 210px; }
+            .hero-actor {
+                width: 126px;
+                height: 124px;
+                bottom: 10px;
+            }
+            .hero-actor.is-attacker {
+                left: 16px;
+                bottom: 14px;
+            }
+            .hero-actor.is-defender {
+                right: 16px;
+                bottom: 10px;
+            }
+            .battle-strike-fx {
+                bottom: 42px;
+                width: 68px;
+                height: 68px;
+            }
         }
 
         @media (max-height: 760px) and (max-width: 760px) {
