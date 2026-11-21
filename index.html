@@ -129,7 +129,7 @@
         .piece::before { position: absolute; z-index: -1; right: 15%; bottom: 8%; left: 15%; height: 12%; border: 1px solid rgba(102, 79, 43, .72); border-radius: 3px 3px 6px 6px; background: linear-gradient(180deg, #d0bd91, #78684a 43%, #423a2b); box-shadow: 0 3px 3px rgba(0,0,0,.48), inset 0 1px rgba(255,245,213,.38); content: ""; }
         .piece::after { position: absolute; z-index: -1; right: 26%; bottom: 5%; left: 26%; height: 3px; border-radius: 50%; background: rgba(15, 16, 14, .58); content: ""; }
         .piece.white { color: #f0e5c9; text-shadow: 0 1px 0 #a39067, 0 3px 1px #64563d, 0 6px 5px rgba(27, 24, 18, .78); -webkit-text-stroke: .45px #746345; }
-        .piece.black { color: #39403d; text-shadow: 0 1px 0 #b0aa96, 0 3px 1px #171916, 0 6px 5px rgba(0, 0, 0, .86); -webkit-text-stroke: .45px #171a17; }
+        .piece.black { color: #5b625c; text-shadow: 0 1px 0 #d8ccb2, 0 3px 1px #2f332e, 0 6px 5px rgba(27, 24, 18, .65); -webkit-text-stroke: .45px #8e7d5c; }
         .piece[data-piece="k"] { filter: drop-shadow(0 0 3px rgba(218, 179, 99, .35)); }
         .piece.white[data-piece="r"] { color: #c2ad7d; }
         .square:active .piece { transform: translateY(-5px) scale(1.05); }
@@ -552,15 +552,15 @@
 .lp-piece-group .lp-f7 { fill: #5a4228; }
 .lp-piece-group .lp-f8 { fill: #48341f; }
 
-.hero-actor[data-color="black"] .lp-piece-group .lp-f0 { fill: #8d6847; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f1 { fill: #795638; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f2 { fill: #66462c; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f3 { fill: #553922; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f4 { fill: #452d1a; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f5 { fill: #372314; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f6 { fill: #2b1b0e; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f7 { fill: #201309; }
-.hero-actor[data-color="black"] .lp-piece-group .lp-f8 { fill: #160c05; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f0 { fill: #e6d7b9; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f1 { fill: #d4c29e; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f2 { fill: #bfa982; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f3 { fill: #a68f68; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f4 { fill: #887250; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f5 { fill: #6e5b3e; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f6 { fill: #574830; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f7 { fill: #443724; }
+.hero-actor[data-color="black"] .lp-piece-group .lp-f8 { fill: #33291a; }
 
 .lp-piece-group, .part-throne-weapon, .part-greataxe, .part-sword {
     display: none;
@@ -4228,7 +4228,10 @@ body[data-palette="light"] .skip-button {
             if (screenId === 'shop-options') renderShop();
         }
 
-        function showModeMenu() { clearTimeout(aiTimer); aiTimer = null; aiThinking = false; showMenuScreen('menu-home'); }
+        function showModeMenu() {
+            if (isStartingGame || (Date.now() - lastModeStartAt < 650)) return;
+            clearTimeout(aiTimer); aiTimer = null; aiThinking = false; showMenuScreen('menu-home');
+        }
 
         function openMatchSummary(data) {
             lastMatchSummaryData = data;
@@ -4491,13 +4494,33 @@ body[data-palette="light"] .skip-button {
             selected = null; legalMoves = []; gameOver = false; render();
         }
 
+        let lastSelectedMode = 'local';
+        let lastModeStartAt = 0;
+        let isStartingGame = false;
+
         function startSelectedGame(mode, difficulty = aiDifficulty, isEventMatch = false) {
-            gameMode = mode; aiDifficulty = difficulty; eventMatchActive = isEventMatch; eventMatchRankIndex = rankEventProgress.rankIndex;
-            trainingModeActive = false; showThreatHighlights = false; hintedMove = null;
+            const now = Date.now();
+            if (isStartingGame || (now - lastModeStartAt < 650)) return;
+            isStartingGame = true;
+            lastModeStartAt = now;
+            window.setTimeout(() => { isStartingGame = false; }, 450);
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+            gameMode = mode;
+            lastSelectedMode = mode;
+            aiDifficulty = difficulty;
+            eventMatchActive = isEventMatch;
+            eventMatchRankIndex = rankEventProgress.rankIndex;
+            trainingModeActive = false;
+            showThreatHighlights = false;
+            hintedMove = null;
             flipped = mode === 'computer' ? (playerSide === 'black') : settings.boardFlipped;
             void startConfiguredMusic();
-            menuOverlay.classList.remove('visible'); menuOverlay.setAttribute('aria-hidden', 'true');
-            document.querySelector('.game-shell').removeAttribute('aria-hidden');
+            menuOverlay.classList.remove('visible');
+            menuOverlay.setAttribute('aria-hidden', 'true');
+            const shell = document.querySelector('.game-shell');
+            if (shell) shell.removeAttribute('aria-hidden');
             resetGame();
             if (gameMode === 'computer' && playerSide === 'black') scheduleComputerTurn();
         }
@@ -4511,7 +4534,10 @@ body[data-palette="light"] .skip-button {
             document.getElementById('difficulty-options').hidden = true;
             showMenuScreen('play-options');
         });
-        document.getElementById('local-mode').addEventListener('click', () => startSelectedGame('local'));
+        document.getElementById('local-mode').addEventListener('click', (e) => {
+            e.preventDefault();
+            startSelectedGame('local');
+        });
         document.getElementById('computer-mode').addEventListener('click', () => {
             document.getElementById('mode-options').hidden = true;
             document.getElementById('difficulty-options').hidden = false;
